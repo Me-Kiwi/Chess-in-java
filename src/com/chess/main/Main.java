@@ -34,23 +34,29 @@ public class Main {
 
     boolean isWhite  = false;
     String recieved;
-    //Buffer read
-    try {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-      String message;
-      recieved = reader.readLine();
-      System.out.println("Received from server: " + recieved);
-      isWhite = recieved.equals("U white");
-    } catch(Exception e) {
-      e.printStackTrace();
-    }
+    BufferReader reader;
+    PrintWriter writer;
 
     System.out.println("connection established") ;
+    try {
+        InputStreamReader streamReader = new InputStreamReader(Main.socket.getInputStream());
+        reader = new BufferedReader(streamReader);
+        writer = new PrintWriter(Main.socket.getOutputStream());
+        System.out.println("networking established");
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+
+    String message;
+    recieved = reader.readLine();
+    System.out.println("Received from server: " + recieved);
+    isWhite = recieved.equals("U white");
+
     JFrame subWindow = new JFrame("subWindow");
     JFrame chess = new JFrame("Chess");
-    MainPanel boardPanel = new MainPanel();
-    ChatPanel chatPanel = new ChatPanel();
+    MainPanel boardPanel = new MainPanel(reader, writer);
+    ChatPanel chatPanel = new ChatPanel(writer);
     frameSetUp(chess, boardPanel);
     frameSetUp(subWindow, chatPanel);
     boardPanel.launchClient(isWhite);
