@@ -50,8 +50,8 @@ class GameServer{
 
     sendColorMessage(whiteWriter, "U white");
     sendColorMessage(blackWriter, "U black");
-    Thread whiteListener = new Thread(new ClientHandler(whiteClient));
-    Thread blackListener = new Thread(new ClientHandler(blackClient));
+    Thread whiteListener = new Thread(new ClientHandler(whiteClient, true));
+    Thread blackListener = new Thread(new ClientHandler(blackClient, false));
     whiteListener.start();
     blackListener.start();
   }
@@ -64,8 +64,10 @@ class GameServer{
   class ClientHandler implements Runnable {
     BufferedReader reader;
     Socket sock;
+    boolean color; 
 
-    public ClientHandler(Socket clientSocket) {
+    public ClientHandler(Socket clientSocket, boolean color) {
+      this.color = color ;
       try {
         sock = clientSocket;
         InputStreamReader isReader = new InputStreamReader(sock.getInputStream());
@@ -80,7 +82,7 @@ class GameServer{
       try {
         while ((message = reader.readLine()) != null) {
           System.out.println("read " + message);
-          tellEveryone(message);
+          tellEveryone(message, this.color);
         }
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -88,10 +90,13 @@ class GameServer{
     }
   }
 
-  public void tellEveryone(String message){
+  public void tellEveryone(String message, boolean color){
+    if(color){
         blackWriter.println(message);
         blackWriter.flush();
+    }else{
         whiteWriter.println(message);
         whiteWriter.flush();
+    }
   }
 }
