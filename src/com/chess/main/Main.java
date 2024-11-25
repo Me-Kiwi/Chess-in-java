@@ -8,13 +8,13 @@ import com.chess.mainwindow.* ;
 import com.chess.mainwindow.game.board.* ;
 import com.chess.subwindow.* ;
 
+import java.io.*;
 
 public class Main {
 
   public static final String host = "127.0.0.1" ;
   public static final int port = 5000 ;
   public static Socket socket;
-
 
   public static void main(String[] args) {
 
@@ -26,21 +26,34 @@ public class Main {
         e.printStackTrace() ;
       }
       try{
-        Thread.sleep(100);
+        Thread.sleep(400);
       }catch(Exception e){
         e.printStackTrace();
       }
     }
 
+    boolean isWhite  = false;
+    String recieved;
+    //Buffer read
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+      String message;
+      recieved = reader.readLine();
+      System.out.println("Received from server: " + recieved);
+      isWhite = recieved.equals("U white");
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
+
     System.out.println("connection established") ;
-    // JFrame signIn = new JFrame("sign in") ;
     JFrame subWindow = new JFrame("subWindow");
     JFrame chess = new JFrame("Chess");
     MainPanel boardPanel = new MainPanel();
     ChatPanel chatPanel = new ChatPanel();
     frameSetUp(chess, boardPanel);
     frameSetUp(subWindow, chatPanel);
-    boardPanel.launchClient();
+    boardPanel.launchClient(isWhite);
     chatPanel.launchClient();
     chess.setLocationRelativeTo(null);
     Point point = chess.getLocation() ;

@@ -24,8 +24,8 @@ public class MainPanel extends JPanel {
     addMouseMotionListener(mouse);
   }
 
-  public void launchClient() {
-    game.launch();
+  public void launchClient(boolean isWhite) {
+    game.launch(isWhite);
     // chat.launch();
   }
 
