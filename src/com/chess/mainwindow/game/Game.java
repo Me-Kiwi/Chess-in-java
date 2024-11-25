@@ -34,7 +34,7 @@ public class Game implements Runnable {
     this.boardPanel = boardPanel;
   }
 
-  public synchronized void launch(isWhite) {
+  public synchronized void launch(boolean isWhite) {
     if (running)
       return;
 

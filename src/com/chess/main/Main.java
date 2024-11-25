@@ -8,6 +8,7 @@ import com.chess.mainwindow.* ;
 import com.chess.mainwindow.game.board.* ;
 import com.chess.subwindow.* ;
 
+import java.io.*;
 
 public class Main {
 
@@ -31,16 +32,19 @@ public class Main {
       }
     }
 
-    boolean is_white  = false;
+    boolean isWhite  = false;
     String recieved;
     //Buffer read
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-
-    String message;
-    message = reader.readLine();
-    System.out.println("Received from server: " + message);
-    is_white = recieved.equals("U white");
+      String message;
+      recieved = reader.readLine();
+      System.out.println("Received from server: " + recieved);
+      isWhite = recieved.equals("U white");
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
 
     System.out.println("connection established") ;
     JFrame subWindow = new JFrame("subWindow");
