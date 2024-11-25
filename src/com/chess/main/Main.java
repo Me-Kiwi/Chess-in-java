@@ -12,11 +12,12 @@ import com.chess.subwindow.* ;
 public class Main {
 
   public static final String host = "127.0.0.1" ;
-  public static final int port = 4242 ;
+  public static final int port = 5000 ;
+  public static Socket socket;
+
 
   public static void main(String[] args) {
 
-    Socket socket = null ;
     while(socket == null || !socket.isConnected()){
       System.out.println("waiting for connection") ;
       try{

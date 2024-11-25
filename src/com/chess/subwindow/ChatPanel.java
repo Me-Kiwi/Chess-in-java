@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.chess.mainwindow.game.board.* ;
+import com.chess.main.Main ;
 
 import javax.swing.* ;
 
@@ -20,7 +21,7 @@ public class ChatPanel extends JPanel implements Runnable{
   JTextField outgoing;
   BufferedReader reader;
   PrintWriter writer;
-  Socket sock;
+  // Socket sock;
   public ChatPanel(){
     setPreferredSize(new Dimension(350, Board.SQUARE_SIZE * Board.MAX_ROW));
     setBackground(Color.WHITE);
@@ -33,10 +34,10 @@ public class ChatPanel extends JPanel implements Runnable{
 
   private void setUpNetworking() {
       try {
-          sock = new Socket("127.0.0.1", 5000);
-          InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
+          // sock = new Socket("127.0.0.1", 5000);
+          InputStreamReader streamReader = new InputStreamReader(Main.socket.getInputStream());
           reader = new BufferedReader(streamReader);
-          writer = new PrintWriter(sock.getOutputStream());
+          writer = new PrintWriter(Main.socket.getOutputStream());
           System.out.println("networking established");
       } catch (Exception ex) {
           ex.printStackTrace();
