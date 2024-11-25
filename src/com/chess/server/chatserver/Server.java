@@ -48,11 +48,17 @@ class GameServer{
       e.printStackTrace();
     }
 
+    sendColorMessage(whiteWriter, "U white");
+    sendColorMessage(blackWriter, "U black");
     Thread whiteListener = new Thread(new ClientHandler(whiteClient));
     Thread blackListener = new Thread(new ClientHandler(blackClient));
     whiteListener.start();
     blackListener.start();
+  }
 
+  private void sendColorMessage(PrintWriter writer, String color) {
+    writer.println("You are playing as " + color);
+    writer.flush();
   }
 
   class ClientHandler implements Runnable {
@@ -81,6 +87,7 @@ class GameServer{
       }
     }
   }
+
   public void tellEveryone(String message){
         blackWriter.println(message);
         blackWriter.flush();

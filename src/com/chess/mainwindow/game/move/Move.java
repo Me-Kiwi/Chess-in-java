@@ -25,4 +25,12 @@ public class Move implements Serializable{
   public int[] getcurrPosition(){
     return this.currPosition ;
   }
+
+  public void transform(){
+    
+  }
+
+  public void parse(String string){
+    
+  }
 }
