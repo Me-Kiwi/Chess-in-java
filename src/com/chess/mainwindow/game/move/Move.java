@@ -31,6 +31,8 @@ public class Move implements Serializable{
   }
 
   public void parse(String string){
-    
+    String[] moveSet = string.split("/");
+    prevPosition = {Integer.parseInt(moveSet[1]), Integer.parseInt(moveSet[2])};
+    currPosition = {Integer.parseInt(moveSet[3]), Integer.parseInt(moveSet[4])};
   }
 }

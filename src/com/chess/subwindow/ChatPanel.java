@@ -21,10 +21,11 @@ public class ChatPanel extends JPanel implements Runnable{
   JTextField outgoing;
   BufferedReader reader;
   PrintWriter writer;
-  // Socket sock;
-  public ChatPanel(){
+
+  public ChatPanel(PrintWriter writer){
     setPreferredSize(new Dimension(350, Board.SQUARE_SIZE * Board.MAX_ROW));
     setBackground(Color.WHITE);
+    this.writer = writer
   }
 
   public void launchClient(){
@@ -32,68 +33,43 @@ public class ChatPanel extends JPanel implements Runnable{
     thread.start() ;
   }
 
-  private void setUpNetworking() {
+
+  public class SendButtonListener implements ActionListener {
+    public void actionPerformed(ActionEvent ev) {
       try {
-          // sock = new Socket("127.0.0.1", 5000);
-          InputStreamReader streamReader = new InputStreamReader(Main.socket.getInputStream());
-          reader = new BufferedReader(streamReader);
-          writer = new PrintWriter(Main.socket.getOutputStream());
-          System.out.println("networking established");
+          writer.println(outgoing.getText());
+          writer.flush();
       } catch (Exception ex) {
           ex.printStackTrace();
       }
+      outgoing.setText("");
+      outgoing.requestFocus();
+    }
   }
 
-
-    public class SendButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent ev) {
-            try {
-                writer.println(outgoing.getText());
-                writer.flush();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            outgoing.setText("");
-            outgoing.requestFocus();
-        }
-    }
-
-    public class IncomingReader implements Runnable {
-        public void run() {
-           String message;
-            try {
-                while ((message = reader.readLine()) != null) {
-                    System.out.println("read " + message);
-                    incoming.append(message + "\n");
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+  public void IncomingReader(String message){
+    System.out.println("read " + message);
+    incoming.append(message + "\n");
+  }
 
   public void run(){
     
-        incoming = new JTextArea(15, 15);
-        incoming.setLineWrap(true);
-        incoming.setWrapStyleWord(true);
-        incoming.setEditable(false);
+    incoming = new JTextArea(15, 15);
+    incoming.setLineWrap(true);
+    incoming.setWrapStyleWord(true);
+    incoming.setEditable(false);
 
-        JScrollPane qScroller = new JScrollPane(incoming);
-        qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    JScrollPane qScroller = new JScrollPane(incoming);
+    qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        outgoing = new JTextField(20);
-        JButton sendButton = new JButton("Send");
-        sendButton.addActionListener(new SendButtonListener());
+    outgoing = new JTextField(20);
+    JButton sendButton = new JButton("Send");
+    sendButton.addActionListener(new SendButtonListener());
 
-        this.add(qScroller);
-        this.add(outgoing);
-        this.add(sendButton);
+    this.add(qScroller);
+    this.add(outgoing);
+    this.add(sendButton);
 
-        setUpNetworking();
-
-        Thread readerThread = new Thread(new IncomingReader());
-        readerThread.start();
   }
 }

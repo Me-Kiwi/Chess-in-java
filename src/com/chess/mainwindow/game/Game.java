@@ -102,27 +102,6 @@ public class Game implements Runnable {
       pieces.add(p = new BishopPiece(color, 7, 5, board, pieces));
       board.state[7][5] = p;
 
-      // for(int i = 0 ; i < Board.MAX_ROW ; i++) {
-      //   for(int j = 0 ; j < Board.MAX_COL ; j++){
-      //     if(board.pieceAtPosition(i*Board.SQUARE_SIZE,j*Board.SQUARE_SIZE ) != null){
-      //       System.out.print("1") ;
-      //     } else {
-      //       System.out.print("0") ;
-      //     }
-      //     System.out.print(" ") ;
-      //   }
-      //   System.out.println("") ;
-      // }
-      // try{
-      //   // Thread.sleep(1000) ;
-      // }catch(Exception e){
-      //   e.printStackTrace();
-      // }
-      // System.out.println("aaj omellete nahi banauga 1") ;
-      // for(ChessPiece pi : pieces){
-      //   pi.storePossibleMoves();
-      // }
-      // System.out.println("aaj omellete nahi banauga ") ;
   }
 
   public void update() {
@@ -138,8 +117,7 @@ public class Game implements Runnable {
         }
       }
       if (!mouse.pressed && check) {
-        if (/*board.friendlyPieceAtPosition(mouse.y, mouse.x, turn) == null
-            &&*/ activePiece.canMove(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x), pieces, true)) {
+        if (activePiece.canMove(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x), pieces, true)) {
           activePiece.update(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x));
           if(activePiece.path.contains("pawn")){
             PawnPiece temp = (PawnPiece) activePiece ; 
