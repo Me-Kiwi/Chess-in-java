@@ -57,7 +57,7 @@ class GameServer{
   }
 
   private void sendColorMessage(PrintWriter writer, String color) {
-    writer.println("You are playing as " + color);
+    writer.println(color);
     writer.flush();
   }
 

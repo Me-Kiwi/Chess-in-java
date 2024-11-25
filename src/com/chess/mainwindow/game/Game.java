@@ -40,6 +40,7 @@ public class Game implements Runnable {
   }
 
   public synchronized void launch(boolean isWhite) {
+    System.out.println("this is shit code" + isWhite);
     if (running)
       return;
 
