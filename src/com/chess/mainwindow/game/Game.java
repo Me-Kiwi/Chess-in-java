@@ -26,6 +26,7 @@ public class Game implements Runnable {
   public KingPiece blackKing ;
   public Lock lock = new ReentrantLock() ;
   public static boolean promotionFlag = false ;
+  public boolean playing_as_white;
 
   public Game(MainPanel boardPanel, MyMouse mouse) {
     this.mouse = mouse;
@@ -33,10 +34,11 @@ public class Game implements Runnable {
     this.boardPanel = boardPanel;
   }
 
-  public synchronized void launch() {
+  public synchronized void launch(isWhite) {
     if (running)
       return;
 
+    playing_as_white = isWhite;
     running = true;
     gameThread = new Thread(this);
     gameThread.start();

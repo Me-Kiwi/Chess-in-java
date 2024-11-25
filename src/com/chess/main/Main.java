@@ -15,7 +15,6 @@ public class Main {
   public static final int port = 5000 ;
   public static Socket socket;
 
-
   public static void main(String[] args) {
 
     while(socket == null || !socket.isConnected()){
@@ -26,21 +25,31 @@ public class Main {
         e.printStackTrace() ;
       }
       try{
-        Thread.sleep(100);
+        Thread.sleep(400);
       }catch(Exception e){
         e.printStackTrace();
       }
     }
 
+    boolean is_white  = false;
+    String recieved;
+    //Buffer read
+
+    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+    String message;
+    message = reader.readLine();
+    System.out.println("Received from server: " + message);
+    is_white = recieved.equals("U white");
+
     System.out.println("connection established") ;
-    // JFrame signIn = new JFrame("sign in") ;
     JFrame subWindow = new JFrame("subWindow");
     JFrame chess = new JFrame("Chess");
     MainPanel boardPanel = new MainPanel();
     ChatPanel chatPanel = new ChatPanel();
     frameSetUp(chess, boardPanel);
     frameSetUp(subWindow, chatPanel);
-    boardPanel.launchClient();
+    boardPanel.launchClient(isWhite);
     chatPanel.launchClient();
     chess.setLocationRelativeTo(null);
     Point point = chess.getLocation() ;
