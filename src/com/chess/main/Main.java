@@ -33,10 +33,10 @@ public class Main {
     }
 
     boolean isWhite  = false;
-    String recieved;
+    String recieved = null ;
 
-    BufferReader reader;
-    PrintWriter writer;
+    BufferedReader reader = null;
+    PrintWriter writer = null;
 
     System.out.println("connection established") ;
     try {
@@ -49,7 +49,11 @@ public class Main {
     }
 
     String message;
-    recieved = reader.readLine();
+    try{
+      recieved = reader.readLine();
+    }catch(Exception e){  
+      System.out.println("tumhi samjat kasla nahi") ;
+    }
     System.out.println("Received from server: " + recieved);
     isWhite = recieved.equals("U white");
 

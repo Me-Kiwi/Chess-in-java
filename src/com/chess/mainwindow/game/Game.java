@@ -1,5 +1,6 @@
 package com.chess.mainwindow.game ;
 
+import java.io.* ;
 import java.util.ArrayList ;
 import javax.swing.* ;
 import java.awt.* ;
@@ -27,11 +28,15 @@ public class Game implements Runnable {
   public Lock lock = new ReentrantLock() ;
   public static boolean promotionFlag = false ;
   public boolean playing_as_white;
+  public BufferedReader reader = null ;
+  public PrintWriter writer = null ;
 
-  public Game(MainPanel boardPanel, MyMouse mouse) {
+  public Game(MainPanel boardPanel, MyMouse mouse, BufferedReader reader,PrintWriter writer) {
     this.mouse = mouse;
     board = new Board(pieces);
     this.boardPanel = boardPanel;
+    this.reader = reader ;
+    this.writer = writer ;
   }
 
   public synchronized void launch(boolean isWhite) {
@@ -57,7 +62,7 @@ public class Game implements Runnable {
   public void setPieces() {
     boolean color;
     ChessPiece p;
-      color = false; // set black pieces
+      color = !playing_as_white; // set black pieces
       for (int i = 0; i < Board.MAX_COL; i++) { // set black pawns
         p = new PawnPiece(color, 1, i, board, pieces);
         pieces.add(p);
@@ -80,7 +85,7 @@ public class Game implements Runnable {
       board.state[0][2] = p;
       pieces.add(p = new BishopPiece(color, 0, 5, board, pieces));
       board.state[0][5] = p;
-      color = true; // set white pieces
+      color = playing_as_white; // set white pieces
       for (int i = 0; i < Board.MAX_COL; i++) { // set white pawns
         p = new PawnPiece(color, 6, i, board, pieces);
         pieces.add(p);

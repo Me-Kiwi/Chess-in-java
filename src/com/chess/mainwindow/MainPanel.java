@@ -1,5 +1,6 @@
 package com.chess.mainwindow ;
 
+import java.io.* ;
 import javax.swing.* ;
 import java.awt.* ;
 import com.chess.eventhandlers.* ;
@@ -14,10 +15,10 @@ public class MainPanel extends JPanel {
   public Game game;
   // public Promotion promotion ;
 
-  public MainPanel() {
+  public MainPanel(BufferedReader reader, PrintWriter writer) {
     // this.add(promotion = new Promotion()) ;
     mouse = new MyMouse();
-    game = new Game(this, mouse);
+    game = new Game(this, mouse, reader, writer);
     setPreferredSize((new Dimension(WIDTH, HEIGHT)));
     setBackground(Color.WHITE);
     addMouseListener(mouse);

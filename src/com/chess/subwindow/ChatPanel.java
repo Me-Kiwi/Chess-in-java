@@ -25,7 +25,7 @@ public class ChatPanel extends JPanel implements Runnable{
   public ChatPanel(PrintWriter writer){
     setPreferredSize(new Dimension(350, Board.SQUARE_SIZE * Board.MAX_ROW));
     setBackground(Color.WHITE);
-    this.writer = writer
+    this.writer = writer ;
   }
 
   public void launchClient(){
