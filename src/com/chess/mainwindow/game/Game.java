@@ -42,7 +42,6 @@ public class Game implements Runnable {
   }
 
   public synchronized void launch(boolean isWhite) {
-    System.out.println("this is shit code" + isWhite);
     if (running)
       return;
 
@@ -269,11 +268,6 @@ public class Game implements Runnable {
   }
 
   public void drawPieces(Graphics2D g2d) {
-    // System.out.println("aaj omellete nahi banauga 2") ;
-    // lock.lock() ;
-    // System.out.println("aaj omellete nahi banauga 3") ;
-      // System.out.println("hello there");
-      // System.out.println("there hello blahy blah") ;
       for (ChessPiece piece : pieces) {
         piece.draw(g2d);
       }
@@ -303,7 +297,6 @@ public class Game implements Runnable {
             message = reader.readLine() ;
             System.out.println(message) ;
           }catch(Exception e){
-            System.out.println("le re lundke"); 
           }
           if(message.split("/")[0].equals("c")){
             chatpanel.IncomingReader(message.split("/")[1]) ;
@@ -319,7 +312,6 @@ public class Game implements Runnable {
         }
       }catch(Exception e){
         e.printStackTrace();
-        System.out.println("java ki maa ki chu") ;
       }
 
       
