@@ -12,7 +12,7 @@ import java.io.*;
 
 public class Main {
 
-  public static final String host = "127.0.0.1" ;
+  public static final String host = "13.51.195.127" ;
   public static final int port = 5000 ;
   public static Socket socket;
 
