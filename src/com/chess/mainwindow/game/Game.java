@@ -9,6 +9,7 @@ import com.chess.mainwindow.game.chesspieces.* ;
 import com.chess.mainwindow.game.board.* ;
 import com.chess.mainwindow.* ;
 import com.chess.eventhandlers.* ;
+import com.chess.subwindow.* ;
 
 public class Game implements Runnable {
   private final int TARGET_FPS = 100;
@@ -30,6 +31,7 @@ public class Game implements Runnable {
   public boolean playing_as_white;
   public BufferedReader reader = null ;
   public PrintWriter writer = null ;
+  public static ChatPanel chatpanel = null;
 
   public Game(MainPanel boardPanel, MyMouse mouse, BufferedReader reader,PrintWriter writer) {
     this.mouse = mouse;
@@ -69,11 +71,22 @@ public class Game implements Runnable {
         pieces.add(p);
         board.state[1][i] = p;
       }
-      pieces.add(p = new KingPiece(color, 0, 4, board, pieces));
-      blackKing = (KingPiece)p ;
-      board.state[0][4] = p;
-      pieces.add(p = new QueenPiece(color, 0, 3, board, pieces));
-      board.state[0][3] = p;
+
+      // Accounting for white privilages
+      if(color) {
+        pieces.add(p = new KingPiece(color, 0, 3, board, pieces));
+        blackKing = (KingPiece)p ;
+        board.state[0][3] = p;
+        pieces.add(p = new QueenPiece(color, 0, 4, board, pieces));
+        board.state[0][4] = p;
+      } else {
+        pieces.add(p = new KingPiece(color, 0, 4, board, pieces));
+        blackKing = (KingPiece)p ;
+        board.state[0][4] = p;
+        pieces.add(p = new QueenPiece(color, 0, 3, board, pieces));
+        board.state[0][3] = p;
+      }
+      
       pieces.add(p = new RookPiece(color, 0, 0, board, pieces));
       board.state[0][0] = p;
       pieces.add(p = new RookPiece(color, 0, 7, board, pieces));
@@ -92,11 +105,21 @@ public class Game implements Runnable {
         pieces.add(p);
         board.state[6][i] = p;
       }
-      pieces.add(p = new KingPiece(color, 7, 4, board, pieces));
-      whiteKing = (KingPiece)p ;
-      board.state[7][4] = p;
-      pieces.add(p = new QueenPiece(color, 7, 3, board, pieces));
-      board.state[7][3] = p;
+
+      // Accounting for white privilages
+      if(!color) {
+        pieces.add(p = new KingPiece(color, 7, 3, board, pieces));
+        whiteKing = (KingPiece)p ;
+        board.state[7][3] = p;
+        pieces.add(p = new QueenPiece(color, 7, 4, board, pieces));
+        board.state[7][4] = p;
+      } else {
+        pieces.add(p = new KingPiece(color, 7, 4, board, pieces));
+        whiteKing = (KingPiece)p ;
+        board.state[7][4] = p;
+        pieces.add(p = new QueenPiece(color, 7, 3, board, pieces));
+        board.state[7][3] = p;
+      }
       pieces.add(p = new RookPiece(color, 7, 0, board, pieces));
       board.state[7][0] = p;
       pieces.add(p = new RookPiece(color, 7, 7, board, pieces));
@@ -113,6 +136,7 @@ public class Game implements Runnable {
   }
 
   public void update() {
+    if(turn!=playing_as_white) return;
     synchronized (pieces) {
       if (mouse.pressed && !check) {
         ChessPiece piece = board.pieceAtPosition(mouse.pressedY, mouse.pressedX);
@@ -125,7 +149,16 @@ public class Game implements Runnable {
         }
       }
       if (!mouse.pressed && check) {
-        if (activePiece.canMove(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x), pieces, true)) {
+        if (activePiece !=null &&activePiece.canMove(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x), pieces, true)) {
+          String move = "m/" + activePiece.row + "/" + activePiece.col + "/" +
+          activePiece.getRow(mouse.y) + "/" + activePiece.getCol(mouse.x);
+          try{
+            writer.println(move) ;
+            writer.flush() ;
+          }catch(Exception e){
+            
+          }
+          System.out.println(move) ;
           activePiece.update(activePiece.getRow(mouse.y), activePiece.getCol(mouse.x));
           if(activePiece.path.contains("pawn")){
             PawnPiece temp = (PawnPiece) activePiece ; 
@@ -141,6 +174,8 @@ public class Game implements Runnable {
           }
           activePiece.lastMoveNumber = Game.moveNumber;
           Game.moveNumber++;
+
+
           if(blackKing.checkMate(pieces)){
             System.out.println("white wins") ;
           }
@@ -160,15 +195,77 @@ public class Game implements Runnable {
     }
   }
 
-  public void render(Graphics2D g2d) {
-    lock.lock();
-    board.draw(g2d);
-    if(board.showPromotionWindow){
-      // board.drawPromotionWindow(g2d);
+  // public void opponentMove(int prow, int pcol, int crow, int ccol){
+  //   //transform
+  //   int prevrow = 7 - prow ;
+  //   int prevcol = 7 - pcol ;
+  //   int currrow = 7 - crow ;
+  //   int currcol = 7 - ccol ;
+  //   //find active piece
+  //   ChessPiece activePiece = board.pieceAtPosition(Board.SQUARE_SIZE*prevrow, Board.SQUARE_SIZE*prevcol);
+  //   board.setActiveBlock(prevrow, prevcol);
+  //   activePiece.update(currrow, currcol);
+
+  //   if(activePiece.path.contains("pawn")){
+  //     PawnPiece temp = (PawnPiece) activePiece ; 
+  //     temp.firstMove = false ;
+  //   }
+  //   pieces.remove(board.enemyPieceAtPosition(Board.SQUARE_SIZE*currrow, Board.SQUARE_SIZE*currcol, turn));
+  //   board.updateActiveBlock(Board.SQUARE_SIZE*currrow, Board.SQUARE_SIZE*currcol);
+  //   turn = !turn;
+  //   boardPanel.repaint() ;
+  //   if(promotionFlag == true){
+  //     PawnPiece pawn = (PawnPiece)activePiece ;
+  //     pawn.promote() ;
+  //   }
+  //   activePiece.lastMoveNumber = Game.moveNumber;
+  //   Game.moveNumber++;
+
+  //   if(blackKing.checkMate(pieces)){
+  //     System.out.println("white wins") ;
+  //   }
+  //   else if( whiteKing.checkMate(pieces)){
+  //     System.out.println("black wins") ;
+  //   }
+  // }
+
+  public void opponentMove(int prow, int pcol, int crow, int ccol){
+    //transform
+    int prevrow = 7 - prow ;
+    int prevcol = 7 - pcol ;
+    int currrow = 7 - crow ;
+    int currcol = 7 - ccol ;
+
+
+    ChessPiece piece = board.pieceAtPosition(prevrow*Board.SQUARE_SIZE, prevcol*Board.SQUARE_SIZE);
+    if(piece == null) {
+      System.out.println("NULL");
+      return;
     }
-    // boardPanel.promotion.drawPromotionWindow(g2d);
-    drawPieces(g2d);
-    lock.unlock();
+    activePiece = piece;
+    board.setActiveBlock(prevrow*Board.SQUARE_SIZE, prevcol*Board.SQUARE_SIZE);
+
+    if(activePiece == null) return;
+    activePiece.update(activePiece.getRow(currrow*Board.SQUARE_SIZE), activePiece.getCol(currcol*Board.SQUARE_SIZE));
+    if(activePiece.path.contains("pawn")){
+      PawnPiece temp = (PawnPiece) activePiece ; 
+      temp.firstMove = false ;
+    }
+    pieces.remove(board.enemyPieceAtPosition(currrow*Board.SQUARE_SIZE, currcol*Board.SQUARE_SIZE, turn));
+    board.updateActiveBlock(currrow*Board.SQUARE_SIZE, currcol*Board.SQUARE_SIZE);
+    turn = !turn;
+    boardPanel.repaint() ;
+    activePiece.lastMoveNumber = Game.moveNumber;
+    Game.moveNumber++;
+
+
+    if(blackKing.checkMate(pieces)){
+      System.out.println("white wins") ;
+    }
+    else if( whiteKing.checkMate(pieces)){
+      System.out.println("black wins") ;
+    }
+    activePiece = null;
   }
 
   public void drawPieces(Graphics2D g2d) {
@@ -186,6 +283,11 @@ public class Game implements Runnable {
     // lock.unlock() ;
   }
 
+  public void render(Graphics2D g2d) {
+    board.draw(g2d);
+    drawPieces(g2d);
+  }
+
   public void run() {
     init();
     long startTime;
@@ -194,6 +296,32 @@ public class Game implements Runnable {
       startTime = System.currentTimeMillis();
       // update
       update();
+      try{
+        if(reader.ready()){
+          String message = null ;
+          try{
+            message = reader.readLine() ;
+            System.out.println(message) ;
+          }catch(Exception e){
+            System.out.println("le re lundke"); 
+          }
+          if(message.split("/")[0].equals("c")){
+            chatpanel.IncomingReader(message.split("/")[1]) ;
+          }
+          else if(message.split("/")[0].equals("m")){
+            int prevrow = Integer.parseInt(message.split("/")[1]) ;
+            int prevcol = Integer.parseInt(message.split("/")[2]) ;
+            int currrow = Integer.parseInt(message.split("/")[3]) ;
+            int currcol = Integer.parseInt(message.split("/")[4]) ;
+            System.out.println(prevrow+ prevcol+ currrow+ currcol);
+            opponentMove(prevrow, prevcol, currrow, currcol);
+          }
+        }
+      }catch(Exception e){
+        e.printStackTrace();
+        System.out.println("java ki maa ki chu") ;
+      }
+
       
       // render
       boardPanel.repaint();

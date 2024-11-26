@@ -12,6 +12,7 @@ import java.net.Socket;
 
 import com.chess.mainwindow.game.board.* ;
 import com.chess.main.Main ;
+import com.chess.mainwindow.game.* ;
 
 import javax.swing.* ;
 
@@ -26,6 +27,7 @@ public class ChatPanel extends JPanel implements Runnable{
     setPreferredSize(new Dimension(350, Board.SQUARE_SIZE * Board.MAX_ROW));
     setBackground(Color.WHITE);
     this.writer = writer ;
+    Game.chatpanel = this ;
   }
 
   public void launchClient(){
@@ -37,7 +39,9 @@ public class ChatPanel extends JPanel implements Runnable{
   public class SendButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
       try {
-          writer.println(outgoing.getText());
+          String out = outgoing.getText() ;
+          incoming.append(out + "\n");
+          writer.println("c/" + out);
           writer.flush();
       } catch (Exception ex) {
           ex.printStackTrace();
